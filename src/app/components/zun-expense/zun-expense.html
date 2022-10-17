@@ -1,0 +1,107 @@
+<!--
+・テーマカラーは緑
+・会社PCから操作する
+・経費精算申請ができる
+・当月分の経費の一覧を参照できる
+・過去分の軽視の一覧を参照できる
+・当月分の経費は後から編集できる
+・ExcelおよびCSV形式で出力できる
+・写真などを添付できる
+-->
+<div class="zun-expense">
+
+    <div class="header-area">
+        <div class="app-title">zun-expense</div>
+        <div class="user-name">{{ loginUser.userId }} {{ loginUser.userName }}</div>
+        <button class="logout">ログアウト</button>    
+    </div>
+    <div class="form-area">
+        <div class="caption">経費入力</div>
+        <!-- <hr/> -->
+        <label class="required">支払先</label>
+        <input type="text" name="請求先"  [(ngModel)]="editingExpense.source" />
+        <br />
+        <label class="required">取引日</label>
+        <input type="date"  [(ngModel)]="editingExpense.date" />
+        <br />
+        <label class="required">金額</label>
+        <input type="number" min="0" [(ngModel)]="editingExpense.ammountOfMoney" />円
+        <br />
+        <label class="required">費目</label>
+        <select [(ngModel)]="editingExpense.himoku">
+            <option>費目を選択</option>
+            <option>交通費</option>
+            <option>出張手当</option>
+            <option>消耗品</option>
+            <option>その他</option>
+        </select>
+        <br />
+        <label>添付ファイル</label>
+        <input type="file"  [(ngModel)]="editingExpense.files" />
+        <br />
+        <label>特記事項</label>
+        <textarea  [(ngModel)]="editingExpense.memo"></textarea>
+    
+    </div>
+    
+    <div class="button-area">
+        <button>クリア</button>
+        <button (click)="add(editingExpense)">追加</button>
+        <button (click)="delete(editingExpense);clear()">削除</button>
+        <button>経費申請</button>
+        <button>Excel出力</button>
+        <button>csvエクスポート</button>
+    </div>
+    
+    <div class="list-area">
+        <div class="caption">経費一覧</div>
+        <!-- <hr/> -->
+        <!-- <label>今月/過去分</label>
+        <input id="current" name="current_past" type="radio" value="0" (change)="setShowCurrent(true)" [checked]="showCurrent" />
+        <label for="current">今月</label>
+        <input id="past" name="current_past" type="radio" value="1" (change)="setShowCurrent(false)" [checked]="!showCurrent" />
+        <label for="past">過去分</label> -->
+    
+        <label>申請月切り替え</label>
+         <select [(ngModel)]="selectedYYYYMM">
+            <ng-container *ngFor="let yyyymm of yyyymmList;">
+                <option [value]="yyyymm">{{ yyyymm }}</option>
+            </ng-container>
+        </select>
+        <button (click)="changeYYYYMM()">変更</button>
+        <table>
+            <tbody>
+                <tr>
+                    <th class="id">#</th>
+                    <th class="no">申請番号</th>
+                    <th class="source">支払先</th>
+                    <th chass="date">発生日</th>
+                    <th class="himoku">費目</th>
+                    <th class="ammount">金額</th>
+                    <th class="file">添付ファイル</th>
+                    <th class="memo">特記事項</th>
+                    <th class="status">ステータス</th>
+                    <th class="control">操作</th>
+                </tr>
+                <ng-container *ngFor="let data of expenseListData;let idx = index">
+                    <tr>
+                        <td class="id">{{ idx + 1 }}</td>
+                        <td class="no">{{ data.no }}</td>
+                        <td class="source">{{ data.source }}</td>
+                        <td class="date">{{ formattedDate(data.date) }}</td>
+                        <td class="himoku">{{ data.himoku }}</td>
+                        <td class="ammount">{{ formattedYen(data.ammountOfMoney) }}</td>
+                        <td class="file">無</td>
+                        <td class="memo">{{ data.memo }}</td>
+                        <td class="status">{{ data.status }}</td>
+                        <td class="control">
+                            <button *ngIf="editable()" (click)="edit(data)">編集</button>
+                            <button *ngIf="editable()" (click)="delete(data)">削除</button>
+                        </td>
+                    </tr>    
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+        
+</div>
